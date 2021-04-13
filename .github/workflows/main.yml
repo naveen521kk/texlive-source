@@ -45,7 +45,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         with:
-          path: temp
           fetch-depth: 0
       - uses: msys2/setup-msys2@v2
         with:
@@ -63,4 +62,4 @@ jobs:
       - name: Full build
         shell: msys2 {0}
         run: |
-          source Build -C
+          ./Build -C
