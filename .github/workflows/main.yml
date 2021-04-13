@@ -14,8 +14,8 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+  # This workflow contains a single job called "build-linux"
+  build-linux:
     # The type of runner that the job will run on
     runs-on: ubuntu-16.04
     env:
@@ -28,4 +28,39 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
           cd $GITHUB_WORKSPACE ; ./Build -C
+  build-mingw:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - msystem: MINGW64
+            arch: x86_64
+          - msystem: MINGW32
+            arch: i686
+    name: ${{ matrix.msystem }}
+    env:
+      TL_MAKE_FLAGS: -j 2
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          path: temp
+          fetch-depth: 0
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MSYS
+          install: >-
+            git
+            msys2-devel
+            base-devel
+            binutils
+            mingw-w64-${{ matrix.arch }}-toolchain
+            mingw-w64-${{ matrix.arch }}-perl
+            mingw-w64-${{ matrix.arch }}-fontconfig
+          update: true
 
+      - name: Full build
+        shell: msys2 {0}
+        run: |
+          ./Build -C
