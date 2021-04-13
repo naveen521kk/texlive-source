@@ -49,7 +49,7 @@ jobs:
           fetch-depth: 0
       - uses: msys2/setup-msys2@v2
         with:
-          msystem: MSYS
+          msystem: ${{ matrix.msystem }}
           install: >-
             git
             msys2-devel
@@ -63,4 +63,4 @@ jobs:
       - name: Full build
         shell: msys2 {0}
         run: |
-          ./Build -C
+          cd $GITHUB_WORKSPACE ; ./Build -C
