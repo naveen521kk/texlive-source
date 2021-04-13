@@ -63,4 +63,4 @@ jobs:
       - name: Full build
         shell: msys2 {0}
         run: |
-          cd $GITHUB_WORKSPACE ; ./Build -C
+          source Build -C
